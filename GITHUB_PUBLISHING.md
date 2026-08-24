@@ -18,6 +18,10 @@
 5. Dołącz plik `wizard-investigation-board-v0.14.0.zip` jako plik wydania.
 6. Opublikuj wydanie.
 
-## Po utworzeniu repozytorium
+## Adres instalacyjny Foundry
 
-Uzupełnij w `module.json` pola `url`, `manifest` i `download` rzeczywistymi adresami repozytorium oraz plików GitHub Release. Nie używaj adresów przykładowych ani prywatnego repozytorium, ponieważ Foundry musi pobrać manifest i ZIP bez logowania.
+Publiczny manifest znajduje się pod adresem:
+
+`https://raw.githubusercontent.com/Wizard0ne/wizard-investigation-board/main/module.json`
+
+Po opublikowaniu nowej wersji należy zaktualizować `version` oraz `download` w `module.json`, wysłać commit do `main`, a następnie dołączyć ZIP o identycznej nazwie do właściwego GitHub Release.

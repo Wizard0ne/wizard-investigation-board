@@ -73,10 +73,19 @@ W v0.14.0 dodano bezpieczne przywracanie kopii migracyjnej. Przed odzyskaniem mo
 
 ## Instalacja
 
-1. Rozpakuj folder `wizard-investigation-board` do `FoundryVTT/Data/modules/`.
-2. Uruchom ponownie Foundry.
-3. Włącz moduł w **Manage Modules**.
-4. Jako MG wybierz narzędzia Tokenów i kliknij ikonę diagramu.
+### Instalacja z manifestu
+
+W instalatorze modułów Foundry wybierz **Install Module**, wklej poniższy adres w polu manifestu i zatwierdź:
+
+`https://raw.githubusercontent.com/Wizard0ne/wizard-investigation-board/main/module.json`
+
+### Instalacja ręczna
+
+1. Pobierz ZIP z GitHub Releases.
+2. Rozpakuj folder `wizard-investigation-board` do `FoundryVTT/Data/modules/`.
+3. Uruchom ponownie Foundry.
+4. Włącz moduł w **Manage Modules**.
+5. Jako MG wybierz narzędzia Tokenów i kliknij ikonę diagramu.
 
 ## Publiczne testy
 
@@ -96,4 +105,4 @@ Nowe karty upuszczone w zwykłym widoku MG mają `visibility: "gm"`. Karty upusz
 
 ## Status
 
-v0.14.0 jest kandydatem do stabilnego v1.0.0. Przed publikacją adresów automatycznej instalacji w `module.json` należy uzupełnić docelowy adres repozytorium i pliku wydania GitHub.
+v0.14.0 jest publicznym kandydatem do stabilnego v1.0.0. Manifest korzysta z głównej gałęzi repozytorium, a instalacyjny ZIP z załącznika wydania GitHub.
