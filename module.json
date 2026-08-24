@@ -1,0 +1,22 @@
+{
+  "id": "wizard-investigation-board",
+  "title": "Wizard Investigation Board",
+  "description": "A practical investigation board for Foundry VTT V14.",
+  "version": "0.14.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "authors": [
+    {
+      "name": "Wizard Investigation Board"
+    }
+  ],
+  "esmodules": [
+    "scripts/board-v0140.js"
+  ],
+  "styles": [
+    "styles/board-v0140.css"
+  ],
+  "socket": true
+}

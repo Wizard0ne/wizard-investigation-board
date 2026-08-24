@@ -1,0 +1,92 @@
+<div class="wib-root" style="height: 100%; min-height: 560px;">
+  <header class="wib-toolbar">
+    <label class="wib-case-picker">
+      <span>Sprawa</span>
+      <select data-role="case-select" aria-label="Aktywna sprawa">
+        <option value="">— wybierz sprawę —</option>
+        {{#each cases}}
+          <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </label>
+      <button type="button" data-action="new-case"><i class="fa-solid fa-plus"></i> Nowa sprawa</button>
+    {{#if isGM}}
+      <button type="button" data-action="case-settings" {{#unless canConfigureCase}}disabled{{/unless}} title="Ustawienia widoczności sprawy"><i class="fa-solid fa-gear"></i></button>
+      <button type="button" data-action="add-document" {{#unless hasCase}}disabled{{/unless}}><i class="fa-solid fa-file-circle-plus"></i> Dodaj dokument</button>
+      <button type="button" data-action="delete-case" {{#unless hasCase}}disabled{{/unless}}><i class="fa-solid fa-trash"></i> Usuń</button>
+    {{/if}}
+    {{#if canEditCase}}<button type="button" data-action="new-note" {{#unless hasCase}}disabled{{/unless}}><i class="fa-solid fa-note-sticky"></i> Notatka</button>
+      <button type="button" data-action="connection-mode" {{#unless hasCase}}disabled{{/unless}} class="{{#if connecting}}active{{/if}}"><i class="fa-solid fa-link"></i> {{#if connecting}}Łączenie aktywne{{else}}Połącz karty{{/if}}</button>
+      <button type="button" data-action="undo" {{#unless canUndo}}disabled{{/unless}} title="Cofnij ostatnią zmianę"><i class="fa-solid fa-rotate-left"></i></button>{{/if}}
+    {{#if isGM}}<button type="button" data-action="player-view" {{#unless hasCase}}disabled{{/unless}} class="{{#if playerView}}active{{/if}}">
+      <i class="fa-solid fa-eye"></i> Widok graczy
+    </button>{{/if}}
+    <button type="button" data-action="fit" {{#unless hasCase}}disabled{{/unless}}><i class="fa-solid fa-expand"></i> Dopasuj</button>
+    <button type="button" data-action="reset-zoom" {{#unless hasCase}}disabled{{/unless}} title="Powiększenie 100%"><i class="fa-solid fa-magnifying-glass"></i> 100%</button>
+    <button type="button" data-action="timeline-view" {{#unless hasCase}}disabled{{/unless}} class="{{#if timelineView}}active{{/if}}"><i class="fa-solid fa-timeline"></i> Oś czasu</button>
+    {{#if timelineView}}<label class="wib-date-filter">Od <input type="date" data-role="timeline-from" value="{{timelineFrom}}"></label><label class="wib-date-filter">Do <input type="date" data-role="timeline-to" value="{{timelineTo}}"></label>{{/if}}
+    <button type="button" data-action="toggle-images" title="Włącz lub wyłącz grafiki kart" class="{{#if showImages}}active{{/if}}"><i class="fa-solid fa-image"></i></button>
+    <select data-role="filter-type" title="Filtruj według typu"><option value="all">Wszystkie typy</option><option value="npc">NPC</option><option value="document">Dokumenty</option><option value="item">Przedmioty</option><option value="location">Miejsca</option><option value="note">Notatki</option></select>
+    <select data-role="filter-status" title="Filtruj według statusu"><option value="all">Wszystkie statusy</option><option value="unknown">Nieustalone</option><option value="suspected">Podejrzenia</option><option value="confirmed">Potwierdzone</option><option value="false">Fałszywe tropy</option><option value="resolved">Rozwiązane</option></select>
+    <select data-role="filter-group" title="Filtruj według grupy"><option value="all">Wszystkie grupy</option><option value="none">Bez grupy</option>{{#each groups}}<option value="{{id}}">{{name}}</option>{{/each}}</select>
+    {{#if canEditCase}}<button type="button" data-action="auto-layout" {{#unless hasNodes}}disabled{{/unless}} title="Automatycznie ułóż widoczne karty"><i class="fa-solid fa-table-cells-large"></i></button>{{/if}}
+    {{#if selectedCount}}{{#if canEditCase}}<button type="button" data-action="create-group" title="Utwórz grupę z zaznaczonych kart"><i class="fa-solid fa-layer-group"></i></button><button type="button" data-action="bulk-edit" title="Operacje zbiorcze"><i class="fa-solid fa-list-check"></i></button>{{/if}}<button type="button" data-action="clear-selection" title="Wyczyść zaznaczenie"><i class="fa-solid fa-object-group"></i> {{selectedCount}}</button>{{/if}}
+    <label class="wib-search"><input type="search" data-role="search-input" placeholder="Szukaj karty…" {{#unless hasCase}}disabled{{/unless}}><button type="button" data-action="search" {{#unless hasCase}}disabled{{/unless}} title="Znajdź i wycentruj"><i class="fa-solid fa-magnifying-glass"></i></button></label>
+    {{#if isGM}}<button type="button" data-action="validate-case" {{#unless canConfigureCase}}disabled{{/unless}} title="Sprawdź i napraw dane aktywnej sprawy"><i class="fa-solid fa-shield-halved"></i></button><button type="button" data-action="restore-backup" {{#unless hasMigrationBackup}}disabled{{/unless}} title="Przywróć kopię migracyjną"><i class="fa-solid fa-clock-rotate-left"></i></button><button type="button" data-action="export-case" {{#unless hasCase}}disabled{{/unless}} title="Eksportuj sprawę"><i class="fa-solid fa-file-export"></i></button><button type="button" data-action="import-case" title="Importuj sprawę"><i class="fa-solid fa-file-import"></i></button>{{/if}}
+    <span class="wib-version" title="Wersja modułu Wizard Investigation Board">v{{moduleVersion}}</span>
+  </header>
+
+  <section class="wib-board" data-role="board" tabindex="0" style="min-height: 470px;">
+    {{#unless hasCase}}
+      <div class="wib-empty">Wybierz istniejącą sprawę albo utwórz nową.</div>
+    {{else}}
+      {{#unless hasNodes}}
+        <div class="wib-empty">{{#if isGM}}Przeciągnij tutaj Actor, Journal, Item lub Scene z Foundry.{{else}}W tej sprawie nie ma jeszcze ujawnionych kart.{{/if}}</div>
+      {{/unless}}
+      {{#if timelineView}}
+      <div class="wib-timeline">
+        {{#unless hasTimelineNodes}}<div class="wib-timeline-empty">Brak kart z datą w wybranym zakresie. Datę można dodać podczas edycji dowolnej karty.</div>{{/unless}}
+        {{#each timelineNodes}}<article class="wib-timeline-entry" data-node-id="{{id}}"><time>{{#if approximate}}około {{/if}}{{dateLabel}}</time><div><strong>{{name}}</strong><small>{{statusLabel}}{{#if authorName}} · autor: {{authorName}}{{/if}}</small>{{#if description}}<p>{{description}}</p>{{/if}}</div><button type="button" data-action="focus-timeline-node" title="Pokaż kartę na planszy"><i class="fa-solid fa-crosshairs"></i></button></article>{{/each}}
+      </div>
+      {{else}}
+      <div class="wib-world" data-role="world" style="transform: translate({{view.panX}}px, {{view.panY}}px) scale({{view.zoom}});">
+        {{#each groups}}{{#if visible}}<section class="wib-group-area" data-group-id="{{id}}" style="left: {{x}}px; top: {{y}}px; width: {{width}}px; height: {{height}}px; border-color: {{color}}; background-color: {{color}}22;">{{#if @root.canEditCase}}<button type="button" data-action="edit-group" style="border-color: {{color}};"><i class="fa-solid fa-layer-group"></i> {{name}}</button>{{else}}<span style="border-color: {{color}};"><i class="fa-solid fa-layer-group"></i> {{name}}</span>{{/if}}</section>{{/if}}{{/each}}
+        <svg class="wib-edges" aria-hidden="true">
+          <defs><marker id="wib-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke"></path></marker></defs>
+          {{#each edges}}
+            <g data-edge-id="{{id}}" class="wib-relation-{{relationType}} wib-line-{{lineStyle}}">
+              <path class="wib-edge-visible" d="{{path}}" stroke="{{color}}" stroke-width="{{width}}" {{#if directed}}marker-end="url(#wib-arrow)"{{/if}}></path>
+              <path class="wib-edge-hit" d="{{path}}"></path>
+              {{#if label}}<text x="{{labelX}}" y="{{labelY}}" fill="{{color}}">{{label}}</text>{{/if}}
+            </g>
+          {{/each}}
+        </svg>
+        {{#each nodes}}
+          <article class="wib-card wib-type-{{type}} wib-status-{{status}} {{#if selectedForConnection}}wib-connect-selected{{/if}} {{#if highlighted}}wib-highlighted{{/if}} {{#if selected}}wib-selected{{/if}}" data-node-id="{{id}}" style="left: {{x}}px; top: {{y}}px;">
+            <div class="wib-card-icon">{{#if showImage}}<img src="{{image}}" alt="">{{else}}<i class="{{icon}}"></i>{{/if}}</div>
+            <div class="wib-card-copy">
+              <strong>{{name}}</strong>
+              <small><i class="{{statusIcon}}"></i> {{statusLabel}} · {{typeLabel}}{{#if isGMOnly}} · tylko MG{{/if}}</small>
+              {{#if authorName}}<small><i class="fa-solid fa-user-pen"></i> {{authorName}}</small>{{/if}}
+              {{#if description}}<p>{{description}}</p>{{/if}}
+            </div>
+            <div class="wib-card-actions">
+              {{#if hasDocument}}<button type="button" data-action="open-document" title="Otwórz dokument"><i class="fa-solid fa-up-right-from-square"></i></button>{{/if}}
+              {{#if @root.canEditCase}}
+              <button type="button" data-action="edit-node" title="Edytuj kartę"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" data-action="delete-node" title="Usuń kartę"><i class="fa-solid fa-trash"></i></button>
+              {{#if @root.isGM}}{{#if isGMOnly}}<button type="button" data-action="reveal-node" title="Ujawnij graczom"><i class="fa-solid fa-eye"></i></button>{{/if}}{{/if}}
+              {{#if ../connecting}}<button type="button" data-action="connect-node" title="Wybierz do połączenia"><i class="fa-solid fa-link"></i></button>{{/if}}
+              {{/if}}
+            </div>
+          </article>
+        {{/each}}
+      </div>
+      <div class="wib-minimap" data-role="minimap" title="Kliknij, aby przenieść widok"></div>
+      {{/if}}
+    {{/unless}}
+  </section>
+  <footer class="wib-status">
+    <span>{{#if hasCase}}Widoczne karty: {{nodeCount}} · Kółko: zoom · Shift + przeciąganie: plansza{{#if canEditCase}} · Ctrl/Cmd + klik: zaznacz wiele · przeciągnij zaznaczoną kartę: przesuń grupę{{/if}} · dwuklik: otwórz dokument{{else}}Brak aktywnej sprawy{{/if}}</span><span>Wizard Investigation Board v{{moduleVersion}}</span>
+  </footer>
+</div>
